@@ -1,11 +1,36 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../images/logoImages/Group 4.svg";
 import image1 from "../../images/logoImages/image 1.png";
 import image2 from "../../images/logoImages/Vector.png";
 import image3 from "../../images/logoImages/Vector2.png";
+import Userpool from "./Userpool";
 
 export default function SignUp() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [confirmPs, setConfirmPs] = useState("");
+  const navigate = useNavigate();
+  const registre = () => {
+    if (confirmPs !== password) {
+      console.error("confirm password is incorrect");
+    }
+
+    Userpool.signUp(
+      email,
+      password,
+      [{ Name: "preferred_username", Value: username }],
+      null,
+      (err, data) => {
+        if (err) {
+          console.error(err);
+        } else {
+          navigate("/SignIn");
+        }
+      }
+    );
+  };
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="flex flex-col w-[400px] h-[570px] bg-[#FFFFFF] rounded-md  items-center px-14">
@@ -19,31 +44,39 @@ export default function SignUp() {
         </div>{" "}
         <div className="flex flex-col w-full ">
           <label className="text-black font-normal text-xs  pb-1">
+            {" "}
             Username{" "}
           </label>{" "}
           <input
             type="text"
             className="w-[255px] bg-[#DCDCDC] outline-none rounded mb-2 focus:text-black  "
-          />
-          <label className="text-black font-normal text-xs  pb-1">Email </label>{" "}
+            onChange={(e) => setUsername(e.target.value)}
+          />{" "}
+          <label className="text-black font-normal text-xs  pb-1">
+            {" "}
+            Email{" "}
+          </label>{" "}
           <input
             type="text"
             className="w-[255px] bg-[#DCDCDC] outline-none rounded mb-2 focus:text-black  "
-          />
+            onChange={(e) => setEmail(e.target.value)}
+          />{" "}
           <label className="text-black font-normal text-xs  pb-1">
             Password{" "}
           </label>{" "}
           <input
             type="password"
             className="w-[255px] bg-[#DCDCDC] outline-none rounded mb-2 focus:text-black"
-          />
+            onChange={(e) => setPassword(e.target.value)}
+          />{" "}
           <label className="text-black font-normal text-xs  pb-1">
             Confirm Password{" "}
           </label>{" "}
           <input
             type="password"
             className="w-[255px] bg-[#DCDCDC] outline-none rounded mb-2 focus:text-black"
-          />
+            onChange={(e) => setConfirmPs(e.target.value)}
+          />{" "}
           <div className="flex flex-col justify-center items-center mb-3">
             <h3 className="text-black text-[9px] font-normal">
               Or Sign Up With{" "}
@@ -55,7 +88,10 @@ export default function SignUp() {
             </div>{" "}
           </div>{" "}
           <div className="w-full">
-            <button className="bg-[#2E8544] text-[9px] p-2 w-full rounded font-bold text-white">
+            <button
+              className="bg-[#2E8544] text-[9px] p-2 w-full rounded font-bold text-white"
+              onClick={registre}
+            >
               Sign up{" "}
             </button>{" "}
           </div>{" "}

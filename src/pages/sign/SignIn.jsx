@@ -1,12 +1,42 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 import logo from "../../images/logoImages/Group 4.svg";
 import image1 from "../../images/logoImages/image 1.png";
 import image2 from "../../images/logoImages/Vector.png";
 import image3 from "../../images/logoImages/Vector2.png";
+import Userpool from "./Userpool";
+import { CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
 
 export default function SignIn() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const login = (event) => {
+    event.preventDefault();
+
+    const user = new CognitoUser({
+      Username: email,
+      Pool: Userpool,
+    });
+    const authDetails = new AuthenticationDetails({
+      Username: email,
+      Password: password,
+    });
+    user.authenticateUser(authDetails, {
+      onSuccess: (data) => {
+        console.log("onSuccess: ", data);
+        navigate("/");
+      },
+      onFailure: (data) => {
+        console.error("onFailure: ", data);
+      },
+      newPasswordRequired: (data) => {
+        console.log("newPasswordRequired:", data);
+      },
+    });
+  };
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="flex flex-col w-[400px] h-[500px] bg-[#FFFFFF] rounded-md  items-center px-14">
@@ -25,14 +55,16 @@ export default function SignIn() {
           <input
             type="text"
             className="w-[255px] bg-[#DCDCDC] outline-none rounded mb-3 focus:text-black  "
-          />
+            onChange={(e) => setEmail(e.target.value)}
+          />{" "}
           <label className="text-black font-normal text-xs  pb-1">
             Password{" "}
           </label>{" "}
           <input
             type="password"
             className="w-[255px] bg-[#DCDCDC] outline-none rounded mb-2 focus:text-black"
-          />
+            onChange={(e) => setPassword(e.target.value)}
+          />{" "}
           <div className="flex items-center mb-3">
             <input
               type="checkbox"
@@ -55,7 +87,10 @@ export default function SignIn() {
             </div>{" "}
           </div>{" "}
           <div className="w-full">
-            <button className="bg-[#2E8544] text-[9px] p-2 w-full rounded font-bold text-white">
+            <button
+              className="bg-[#2E8544] text-[9px] p-2 w-full rounded font-bold text-white"
+              onClick={login}
+            >
               Sign in
             </button>{" "}
           </div>{" "}
